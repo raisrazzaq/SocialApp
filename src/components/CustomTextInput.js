@@ -16,7 +16,8 @@ const CustomTextInput = ({
       style={{
         width: '90%',
         height: 50,
-        borderWidth: 0.4,
+        borderWidth: 1,
+        borderColor: isValid ? '#9e9e9e' : 'red',
         borderRadius: 10,
         alignSelf: 'center',
         marginTop: mt ? mt : 20,
@@ -31,7 +32,14 @@ const CustomTextInput = ({
         />
       )}
 
-      <TextInput style={{marginLeft: 10}} placeholder={placeholder} />
+      <TextInput
+        style={{marginLeft: 10, width: '100%'}}
+        value={value}
+        onChangeText={txt => {
+          onChangeText(txt);
+        }}
+        placeholder={placeholder}
+      />
     </View>
   );
 };

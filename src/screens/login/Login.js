@@ -7,17 +7,83 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   BG_COLOR,
   THEME_COLOR,
   THEME_COLOR2,
   Text_COLOR,
-} from '../../utlis/Color';
+} from '../../utils/Color';
 import CustomTextInput from '../../components/CustomTextInput';
 import LinearGradient from 'react-native-linear-gradient';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [bademail, setBademail] = useState('');
+  const [badpassword, setBadpassword] = useState('');
+  const BASE_URL = 'http://localhost:8200/api';
+
+  const validate = () => {
+    let isValid = false;
+    if (email == '') {
+      setBademail('please enter email');
+      isValid = false;
+    } else if (
+      email != '' &&
+      !email
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        )
+    ) {
+      setBademail('please enter valid email');
+      isValid = false;
+    } else if (
+      email != '' &&
+      email
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        )
+    ) {
+      isValid = true;
+      setBademail('');
+    }
+    if (password == '') {
+      setBadpassword('Please enter password');
+      isValid = false;
+    } else if (password != '' && password.length < 6) {
+      setBadpassword('Please enter Min 6 Character password');
+      isValid = false;
+    } else if (password != '' && password.length > 5) {
+      setBadpassword('');
+      isValid = true;
+    }
+    return isValid;
+  };
+
+  const login = async () => {
+    const res = await fetch(
+      'http://localhost:8200/socialApp/api/auth/register',
+      {
+        body: JSON.stringify({
+          emailID: email,
+          password: password,
+          username: 'Ali',
+          mobile: '03455403525',
+          gender: 'Male',
+        }),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const result = await res.json();
+    console.log(result);
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
@@ -33,17 +99,32 @@ const Login = () => {
         <CustomTextInput
           icon={require('../../assets/png/mail.png')}
           placeholder={'Enter Email'}
+          value={email}
+          onChangeText={txt => setEmail(txt)}
+          isValid={bademail === '' ? true : false}
         />
+        {bademail !== '' && <Text style={styles.errortext}>{bademail}</Text>}
+
         <CustomTextInput
           icon={require('../../assets/png/padlock.png')}
           placeholder={'Enter password'}
+          value={password}
+          onChangeText={txt => setPassword(txt)}
+          isValid={badpassword === '' ? true : false}
         />
+        {badpassword !== '' && (
+          <Text style={styles.errortext}>{badpassword}</Text>
+        )}
         <LinearGradient colors={[THEME_COLOR, THEME_COLOR2]} style={styles.btn}>
           <TouchableOpacity
             style={[
               styles.btn,
               {justifyContent: 'center', alignItems: 'center', marginTop: 0},
-            ]}>
+            ]}
+            onPress={() => {
+              validate();
+              login();
+            }}>
             <Text style={styles.btnText}>{'Login'}</Text>
           </TouchableOpacity>
         </LinearGradient>
@@ -93,6 +174,11 @@ const styles = StyleSheet.create({
     color: BG_COLOR,
     fontSize: 20,
     fontWeight: '600',
+  },
+  errortext: {
+    color: 'red',
+    marginLeft: 30,
+    marginTop: 5,
   },
 });
 export default Login;
