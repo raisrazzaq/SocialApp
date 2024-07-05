@@ -16,8 +16,10 @@ import {
 } from '../../utils/Color';
 import CustomTextInput from '../../components/CustomTextInput';
 import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
 
 const Login = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [bademail, setBademail] = useState('');
@@ -75,6 +77,7 @@ const Login = () => {
           gender: 'Male',
         }),
         method: 'POST',
+
         headers: {
           'Content-Type': 'application/json',
         },
@@ -128,6 +131,13 @@ const Login = () => {
             <Text style={styles.btnText}>{'Login'}</Text>
           </TouchableOpacity>
         </LinearGradient>
+        <Text
+          style={styles.signupText}
+          onPress={() => {
+            navigation.navigate('SignUp');
+          }}>
+          Create New Account? <Text style={styles.signup}> Sign Up</Text>
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -179,6 +189,18 @@ const styles = StyleSheet.create({
     color: 'red',
     marginLeft: 30,
     marginTop: 5,
+  },
+  signupText: {
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: 30,
+  },
+  signup: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: THEME_COLOR,
+    // marginLeft: 10,
   },
 });
 export default Login;
